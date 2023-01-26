@@ -8,16 +8,18 @@ class AlarmClock {
         if( typeof id === "undefined"){
             throw new Error("error text");
         }else if(
-          typeof this.alarmCollection.find((clock) => clock.id === id) !== 'undefined'){
+          typeof this.alarmCollection.find((clock) => clock.id === id) !== "undefined"){
             return console.error('Будильник уже существует');
         }
-        return this.alarmCollection.push({id, time, callback})
+        this.alarmCollection.push({id, time, callback})
 
     }
 
     removeClock(id){
+        let currentLenght = this.alarmCollection.length;
         this.alarmCollection = this.alarmCollection.filter((clock) => clock.id !== id);
-        return this.alarmCollection;
+        let newLenght = this.alarmCollection.length;
+        return currentLenght > newLenght;
     }
   
     getCurrentFormattedTime(){
@@ -26,8 +28,8 @@ class AlarmClock {
     
     start(){
         let checkClock = (clock) => {
-            if(this.getCurrentFormattedTime() === clock.time){
-                return clock.callback;
+            if (this.getCurrentFormattedTime() === clock.time){
+                clock.callback();
             } 
         }
         if (this.timerId === null) {
@@ -35,23 +37,23 @@ class AlarmClock {
               this.alarmCollection.forEach((clock) => checkClock(clock));
             }, 2000);
           }
-          return;
     }
-
+    
     stop(){
         if(this.timerId !== null){
             clearInterval(this.timerId);
-            return this.timerId = null;
+            this.timerId = null;
         }
     }
 
     printAlarms(){
        return this.alarmCollection.forEach(
-        (clock) => {console.log('Номер будильника: ${clock.id}, Время звонка: ${clock.time}')});
+        (clock) => {console.log(`Номер будильника: ${clock.id}, Время звонка: ${clock.time}`)});
     }
+    
     clearAlarms(){
         this.stop();
-        return this.alarmCollection = [];
+        this.alarmCollection = [];
     }
 }
 
